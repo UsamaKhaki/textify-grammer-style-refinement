@@ -88,6 +88,9 @@ private struct ProviderTab: View {
             if settings.selectedProvider == .gemini {
                 Link("Get a free Gemini key →", destination: URL(string: "https://aistudio.google.com/app/apikey")!)
             }
+            if settings.selectedProvider == .anthropic {
+                Link("Get an Anthropic API key →", destination: URL(string: "https://console.anthropic.com/settings/keys")!)
+            }
         }
         .formStyle(.grouped)
         .onAppear { loadKeyForCurrent() }
@@ -133,9 +136,10 @@ private struct ProviderTab: View {
         let key = (try? store.load(for: kind)) ?? ""
         let provider: RefinementProvider
         switch kind {
-        case .gemini: provider = GeminiProvider(apiKey: key)
-        case .openai: provider = OpenAIProvider(apiKey: key)
-        case .groq:   provider = GroqProvider(apiKey: key)
+        case .gemini:    provider = GeminiProvider(apiKey: key)
+        case .openai:    provider = OpenAIProvider(apiKey: key)
+        case .groq:      provider = GroqProvider(apiKey: key)
+        case .anthropic: provider = AnthropicProvider(apiKey: key)
         }
         do {
             _ = try await provider.refine("hello")

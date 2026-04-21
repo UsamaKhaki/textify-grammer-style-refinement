@@ -25,9 +25,10 @@ final class AppCoordinator: ObservableObject {
     private func makeProvider(for kind: ProviderKind) -> RefinementProvider {
         let key = try? keychain.load(for: kind)
         switch kind {
-        case .gemini: return GeminiProvider(apiKey: key)
-        case .openai: return OpenAIProvider(apiKey: key)
-        case .groq:   return GroqProvider(apiKey: key)
+        case .gemini:    return GeminiProvider(apiKey: key)
+        case .openai:    return OpenAIProvider(apiKey: key)
+        case .groq:      return GroqProvider(apiKey: key)
+        case .anthropic: return AnthropicProvider(apiKey: key)
         }
     }
 
