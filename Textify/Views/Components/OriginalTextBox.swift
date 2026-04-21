@@ -25,11 +25,11 @@ struct OriginalTextBox: View {
                 .help("Refine again (⌘↵)")
             }
             TextEditor(text: $text)
-                .font(.system(size: 12))
-                .foregroundStyle(GlassTheme.textPrimary)
+                .font(.system(size: 13))
+                .foregroundColor(.white)
                 .scrollContentBackground(.hidden)
                 .tint(.white)
-                .frame(minHeight: 40, maxHeight: 90)
+                .frame(minHeight: 48, maxHeight: 90)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)

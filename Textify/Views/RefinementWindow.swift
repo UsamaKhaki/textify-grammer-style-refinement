@@ -8,7 +8,7 @@ struct RefinementWindow: View {
 
     var body: some View {
         ZStack {
-            GlassTheme.gradient
+            settings.gradientTheme.gradient
                 .ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 12) {
@@ -50,7 +50,7 @@ struct RefinementWindow: View {
                 .foregroundStyle(GlassTheme.textSecondary)
             TextEditor(text: $vm.original)
                 .font(.system(size: 13))
-                .foregroundStyle(GlassTheme.textPrimary)
+                .foregroundColor(.white)
                 .scrollContentBackground(.hidden)
                 .tint(.white)
                 .frame(minHeight: 160)

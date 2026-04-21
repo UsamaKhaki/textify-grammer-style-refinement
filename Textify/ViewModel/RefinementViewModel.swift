@@ -40,6 +40,7 @@ final class RefinementViewModel: ObservableObject {
     /// user may have typed in). Otherwise uses `original` as set from the clipboard.
     func refine() async {
         let text = original.trimmingCharacters(in: .whitespacesAndNewlines)
+        NSLog("[Textify] refine(): sending %d chars to provider — %@", text.count, text)
         guard !text.isEmpty else { state = .empty; return }
         state = .loading
         let kind = providerKindResolver()
