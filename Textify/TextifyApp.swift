@@ -10,8 +10,10 @@ struct TextifyApp: App {
             Button("Refine clipboard") { coordinator.onHotkey() }
                 .keyboardShortcut("t", modifiers: [.command, .shift])
             Divider()
-            Button("Settings…") { coordinator.openSettings() }
-                .keyboardShortcut(",")
+            SettingsLink {
+                Text("Settings…")
+            }
+            .keyboardShortcut(",")
             Divider()
             Button("Quit Textify") { NSApplication.shared.terminate(nil) }
                 .keyboardShortcut("q")
