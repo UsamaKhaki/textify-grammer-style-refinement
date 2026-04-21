@@ -26,13 +26,13 @@ struct RefinementWindow: View {
         case .empty:
             emptyView
         case .loading:
-            OriginalTextBox(text: vm.original)
+            originalBox(isBusy: true)
             loadingView
-        case .result(let triple):
-            OriginalTextBox(text: vm.original)
-            resultsView(triple)
+        case .result:
+            originalBox(isBusy: false)
+            if case .result(let triple) = vm.state { resultsView(triple) }
         case .error(let err):
-            OriginalTextBox(text: vm.original.isEmpty ? "(no clipboard text)" : vm.original)
+            originalBox(isBusy: false)
             errorView(err)
         }
         Spacer(minLength: 0)
@@ -56,6 +56,14 @@ struct RefinementWindow: View {
                     .disabled(vm.original.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
+    }
+
+    private func originalBox(isBusy: Bool) -> some View {
+        OriginalTextBox(
+            text: $vm.original,
+            isBusy: isBusy,
+            onRefine: { Task { await vm.refine() } }
+        )
     }
 
     private var loadingView: some View {
