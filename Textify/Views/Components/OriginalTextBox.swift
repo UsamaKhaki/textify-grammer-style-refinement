@@ -1,19 +1,32 @@
 import SwiftUI
 
 struct OriginalTextBox: View {
-    let text: String
+    @Binding var text: String
+    var isBusy: Bool
+    var onRefine: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text("ORIGINAL")
-                .font(.caption2.weight(.semibold))
-                .tracking(0.6)
-                .foregroundStyle(.secondary)
-            Text(text)
+        VStack(alignment: .leading, spacing: 5) {
+            HStack {
+                Text("ORIGINAL")
+                    .font(.caption2.weight(.semibold))
+                    .tracking(0.6)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button(action: onRefine) {
+                    Label("Refine", systemImage: "arrow.clockwise")
+                        .font(.caption)
+                        .labelStyle(.titleAndIcon)
+                }
+                .buttonStyle(.borderless)
+                .keyboardShortcut(.return, modifiers: [.command])
+                .disabled(isBusy || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .help("Refine again (⌘↵)")
+            }
+            TextEditor(text: $text)
                 .font(.system(size: 12))
-                .foregroundStyle(.secondary)
-                .lineLimit(3)
-                .truncationMode(.tail)
+                .scrollContentBackground(.hidden)
+                .frame(minHeight: 40, maxHeight: 90)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
