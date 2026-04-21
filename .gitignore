@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Xcode — generated project (regenerate with xcodegen)
+Textify.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+
+# Build output
+build/
+DerivedData/
+*.xcuserstate
+
+# SwiftPM
+.build/
+Package.resolved
+
+# Brainstorming scratch
+.superpowers/
