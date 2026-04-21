@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import KeyboardShortcuts
 import ServiceManagement
 
@@ -11,6 +12,11 @@ struct SettingsWindow: View {
         }
         .frame(width: 480, height: 380)
         .padding(20)
+        .onAppear {
+            // LSUIElement apps need explicit activation so keyboard events
+            // (including ⌘V for pasting the API key) reach this window.
+            NSApp.activate(ignoringOtherApps: true)
+        }
     }
 }
 
@@ -63,10 +69,13 @@ private struct ProviderTab: View {
                 }
             }
             Section("API key for \(settings.selectedProvider.displayName)") {
-                SecureField("Paste your key", text: Binding(
-                    get: { keys[settings.selectedProvider] ?? "" },
-                    set: { keys[settings.selectedProvider] = $0 }
-                ))
+                HStack {
+                    SecureField("Paste your key", text: Binding(
+                        get: { keys[settings.selectedProvider] ?? "" },
+                        set: { keys[settings.selectedProvider] = $0 }
+                    ))
+                    Button("Paste") { pasteFromClipboard() }
+                }
                 HStack {
                     Button("Save") { save() }
                     Button("Test key") { Task { await test() } }
@@ -90,6 +99,13 @@ private struct ProviderTab: View {
 
     private func loadKeyForCurrent() {
         keys[settings.selectedProvider] = (try? store.load(for: settings.selectedProvider)) ?? ""
+    }
+
+    private func pasteFromClipboard() {
+        if let clipboardString = NSPasteboard.general.string(forType: .string) {
+            let trimmed = clipboardString.trimmingCharacters(in: .whitespacesAndNewlines)
+            keys[settings.selectedProvider] = trimmed
+        }
     }
 
     private func save() {
