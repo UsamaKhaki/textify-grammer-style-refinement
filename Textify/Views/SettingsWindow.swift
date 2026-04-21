@@ -8,9 +8,10 @@ struct SettingsWindow: View {
         TabView {
             GeneralTab().tabItem { Label("General", systemImage: "gearshape") }
             ProviderTab().tabItem { Label("AI Provider", systemImage: "cpu") }
+            ThemeTab().tabItem { Label("Theme", systemImage: "paintpalette") }
             AboutTab().tabItem { Label("About", systemImage: "info.circle") }
         }
-        .frame(width: 480, height: 380)
+        .frame(width: 520, height: 460)
         .padding(20)
         .onAppear {
             // LSUIElement apps need explicit activation so keyboard events
@@ -152,6 +153,76 @@ private struct ProviderTab: View {
             testMessage = error.localizedDescription
             testMessageIsError = true
         }
+    }
+}
+
+private struct ThemeTab: View {
+    @EnvironmentObject private var settings: SettingsStore
+
+    private let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Pick a gradient for the refinement window")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 14) {
+                    ForEach(GradientTheme.all) { theme in
+                        ThemeSwatch(
+                            theme: theme,
+                            isSelected: settings.gradientThemeId == theme.id
+                        ) {
+                            settings.gradientThemeId = theme.id
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+            Text("Changes apply instantly.")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.horizontal, 4)
+    }
+}
+
+private struct ThemeSwatch: View {
+    let theme: GradientTheme
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    @State private var hovering = false
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 7) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 11)
+                        .fill(theme.gradient)
+                        .frame(height: 60)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 11)
+                                .strokeBorder(
+                                    isSelected ? Color.accentColor : Color.primary.opacity(hovering ? 0.25 : 0.1),
+                                    lineWidth: isSelected ? 3 : 1
+                                )
+                        )
+                    if isSelected {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.white, Color.accentColor)
+                            .shadow(radius: 2)
+                    }
+                }
+                Text(theme.name)
+                    .font(.caption.weight(isSelected ? .semibold : .regular))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+            }
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering = $0 }
     }
 }
 

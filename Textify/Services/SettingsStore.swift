@@ -9,6 +9,7 @@ final class SettingsStore: ObservableObject {
         static let selectedProvider = "selectedProvider"
         static let closeAfterCopy = "closeAfterCopy"
         static let launchAtLogin = "launchAtLogin"
+        static let gradientThemeId = "gradientThemeId"
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -29,4 +30,10 @@ final class SettingsStore: ObservableObject {
     @Published var launchAtLogin: Bool = UserDefaults.standard.bool(forKey: Keys.launchAtLogin) {
         didSet { defaults.set(launchAtLogin, forKey: Keys.launchAtLogin) }
     }
+
+    @Published var gradientThemeId: String = UserDefaults.standard.string(forKey: Keys.gradientThemeId) ?? GradientTheme.defaultId {
+        didSet { defaults.set(gradientThemeId, forKey: Keys.gradientThemeId) }
+    }
+
+    var gradientTheme: GradientTheme { GradientTheme.byId(gradientThemeId) }
 }

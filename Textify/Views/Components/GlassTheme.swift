@@ -1,18 +1,10 @@
 import SwiftUI
 
 /// Colors + reusable view modifiers for the Glassmorphism / Liquid Glass theme.
+/// The background gradient is chosen per-user in Settings (see `GradientTheme` +
+/// `SettingsStore.gradientTheme`); this enum only holds the glass-panel styling
+/// that sits on top of whatever gradient is active.
 enum GlassTheme {
-    // Gradient stops: #667eea → #764ba2 → #f093fb
-    static let gradient = LinearGradient(
-        colors: [
-            Color(red: 0x66 / 255, green: 0x7E / 255, blue: 0xEA / 255),
-            Color(red: 0x76 / 255, green: 0x4B / 255, blue: 0xA2 / 255),
-            Color(red: 0xF0 / 255, green: 0x93 / 255, blue: 0xFB / 255)
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-
     // White-alpha layers for the frosted shell
     static let panelFill  = Color.white.opacity(0.10)
     static let panelBorder = Color.white.opacity(0.25)
