@@ -52,6 +52,7 @@ final class AnthropicProvider: RefinementProvider {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
         request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.setValue("structured-outputs-2025-11-13", forHTTPHeaderField: "anthropic-beta")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, response): (Data, URLResponse)
