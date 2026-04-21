@@ -3,7 +3,7 @@ import Foundation
 final class GeminiProvider: RefinementProvider {
     private let apiKey: String?
     private let session: URLSession
-    private let model = "gemini-2.0-flash"
+    private let model = "gemini-2.5-flash"
 
     init(apiKey: String?, session: URLSession = .shared) {
         self.apiKey = apiKey

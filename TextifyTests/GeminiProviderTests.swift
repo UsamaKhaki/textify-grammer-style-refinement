@@ -16,7 +16,7 @@ final class GeminiProviderTests: XCTestCase {
             // Verify URL shape
             XCTAssertEqual(request.httpMethod, "POST")
             let url = request.url!.absoluteString
-            XCTAssertTrue(url.contains("gemini-2.0-flash"))
+            XCTAssertTrue(url.contains("gemini-2.5-flash"))
             XCTAssertTrue(url.contains("key=gemini-key-xyz"))
             // Fake a successful Gemini response that wraps our JSON in its candidates structure
             let inner = #"{"casual":"Hey!","professional":"Hello.","concise":"Hi."}"#
