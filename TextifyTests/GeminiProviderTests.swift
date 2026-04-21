@@ -41,25 +41,33 @@ final class GeminiProviderTests: XCTestCase {
 
     func testUnauthorized() async {
         MockURLProtocol.handler = { req in
-            (HTTPURLResponse(url: req.url!, statusCode: 401, httpVersion: nil, headerFields: nil)!, Data())
+            let body = #"{"error":{"code":401,"message":"API key not valid","status":"UNAUTHENTICATED"}}"#
+            return (HTTPURLResponse(url: req.url!, statusCode: 401, httpVersion: nil, headerFields: nil)!, Data(body.utf8))
         }
         do {
             _ = try await makeProvider().refine("x")
             XCTFail("expected error")
         } catch let e as ProviderError {
-            XCTAssertEqual(e, .unauthorized)
+            if case .network(let msg) = e {
+                XCTAssertTrue(msg.contains("401"), "message should mention 401: \(msg)")
+                XCTAssertTrue(msg.contains("API key not valid"), "message should include Google's body: \(msg)")
+            } else { XCTFail("expected .network(...), got \(e)") }
         } catch { XCTFail("wrong error: \(error)") }
     }
 
     func testRateLimited() async {
         MockURLProtocol.handler = { req in
-            (HTTPURLResponse(url: req.url!, statusCode: 429, httpVersion: nil, headerFields: nil)!, Data())
+            let body = #"{"error":{"code":429,"message":"Quota exceeded","status":"RESOURCE_EXHAUSTED"}}"#
+            return (HTTPURLResponse(url: req.url!, statusCode: 429, httpVersion: nil, headerFields: nil)!, Data(body.utf8))
         }
         do {
             _ = try await makeProvider().refine("x")
             XCTFail("expected error")
         } catch let e as ProviderError {
-            XCTAssertEqual(e, .rateLimited)
+            if case .network(let msg) = e {
+                XCTAssertTrue(msg.contains("429"), "message should mention 429: \(msg)")
+                XCTAssertTrue(msg.contains("Quota exceeded"), "message should include Google's body: \(msg)")
+            } else { XCTFail("expected .network(...), got \(e)") }
         } catch { XCTFail("wrong error: \(error)") }
     }
 

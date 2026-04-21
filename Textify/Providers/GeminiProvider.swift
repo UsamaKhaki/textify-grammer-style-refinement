@@ -45,12 +45,20 @@ final class GeminiProvider: RefinementProvider {
         }
 
         guard let http = response as? HTTPURLResponse else { throw ProviderError.malformedResponse }
-        switch http.statusCode {
-        case 200: break
-        case 401, 403: throw ProviderError.unauthorized
-        case 429:      throw ProviderError.rateLimited
-        case 500...599: throw ProviderError.server(http.statusCode)
-        default:       throw ProviderError.server(http.statusCode)
+        if http.statusCode != 200 {
+            // Pull out Google's actual error message so we see the real cause
+            // (quota exhausted, model unavailable, billing required, bad key, etc.)
+            // instead of a generic status-code error.
+            struct ErrorEnvelope: Decodable {
+                struct Err: Decodable { let code: Int?; let message: String; let status: String? }
+                let error: Err
+            }
+            let body = (try? JSONDecoder().decode(ErrorEnvelope.self, from: data))?.error.message
+            switch http.statusCode {
+            case 401, 403: throw ProviderError.network("Gemini \(http.statusCode): \(body ?? "unauthorized")")
+            case 429:      throw ProviderError.network("Gemini 429: \(body ?? "rate limited")")
+            default:       throw ProviderError.network("Gemini \(http.statusCode): \(body ?? "unknown error")")
+            }
         }
 
         // Decode Gemini envelope → extract `text` field → parse that as RefinedTriple JSON.
