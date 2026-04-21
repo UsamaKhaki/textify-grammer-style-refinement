@@ -51,10 +51,14 @@ final class AppCoordinator: ObservableObject {
             defer: false
         )
         window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
         window.isReleasedWhenClosed = false
         window.level = .floating
         window.center()
         window.title = "Textify"
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.hasShadow = true
 
         vm.onPick = { [weak self, weak window] chosen in
             self?.clipboard.writeText(chosen)
