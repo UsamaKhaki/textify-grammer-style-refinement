@@ -7,12 +7,16 @@ struct RefinementWindow: View {
     var close: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            content
+        ZStack {
+            GlassTheme.gradient
+                .ignoresSafeArea()
+
+            VStack(alignment: .leading, spacing: 12) {
+                content
+            }
+            .padding(16)
         }
-        .padding(16)
         .frame(width: 560, height: 440)
-        .background(.background)
         .focusable()
         .onKeyPress(.escape) { close(); return .handled }
         .onKeyPress(.init("1")) { vm.pick(1); return .handled }
@@ -43,16 +47,22 @@ struct RefinementWindow: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Paste your message here")
                 .font(.callout)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(GlassTheme.textSecondary)
             TextEditor(text: $vm.original)
                 .font(.system(size: 13))
+                .foregroundStyle(GlassTheme.textPrimary)
+                .scrollContentBackground(.hidden)
+                .tint(.white)
                 .frame(minHeight: 160)
-                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.primary.opacity(0.12)))
+                .padding(10)
+                .glassCard()
             HStack {
                 Spacer()
                 Button("Refine") { Task { await vm.refine() } }
                     .keyboardShortcut(.return, modifiers: [.command])
                     .buttonStyle(.borderedProminent)
+                    .tint(.white.opacity(0.3))
+                    .foregroundStyle(.white)
                     .disabled(vm.original.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
@@ -69,9 +79,13 @@ struct RefinementWindow: View {
     private var loadingView: some View {
         VStack(spacing: 8) {
             ForEach(0..<3) { _ in
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.primary.opacity(0.05))
-                    .overlay(ProgressView().controlSize(.small))
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(GlassTheme.cardFill)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .strokeBorder(GlassTheme.cardBorder, lineWidth: 1)
+                    )
+                    .overlay(ProgressView().controlSize(.small).tint(.white))
                     .frame(height: 68)
             }
         }
@@ -88,28 +102,34 @@ struct RefinementWindow: View {
     private func errorView(_ err: ProviderError) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(err.errorDescription ?? "Something went wrong")
-                .foregroundStyle(.primary)
+                .foregroundStyle(GlassTheme.textPrimary)
             HStack {
                 switch err {
                 case .missingKey, .unauthorized:
-                    Button("Open Settings", action: openSettings).buttonStyle(.borderedProminent)
+                    Button("Open Settings", action: openSettings)
+                        .buttonStyle(.borderedProminent)
+                        .tint(.white.opacity(0.3))
+                        .foregroundStyle(.white)
                 case .network, .timeout, .rateLimited, .server, .malformedResponse:
-                    Button("Retry") { Task { await vm.refine() } }.buttonStyle(.borderedProminent)
+                    Button("Retry") { Task { await vm.refine() } }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.white.opacity(0.3))
+                        .foregroundStyle(.white)
                 }
                 Spacer()
             }
         }
         .padding(14)
-        .background(Color.red.opacity(0.08))
-        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.red.opacity(0.3)))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .background(Color.red.opacity(0.18))
+        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Color.white.opacity(0.4), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
     private var footer: some View {
         HStack {
-            Text("Press 1/2/3 to copy").font(.caption).foregroundStyle(.secondary)
+            Text("Press 1/2/3 to copy").font(.caption).foregroundStyle(GlassTheme.textTertiary)
             Spacer()
-            Text("Esc to close").font(.caption).foregroundStyle(.secondary)
+            Text("Esc to close").font(.caption).foregroundStyle(GlassTheme.textTertiary)
         }
     }
 }

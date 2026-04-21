@@ -10,37 +10,31 @@ struct RefinementCard: View {
 
     var body: some View {
         Button(action: onPick) {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(label.uppercased())
                         .font(.caption.weight(.semibold))
-                        .tracking(0.6)
-                        .foregroundStyle(.secondary)
+                        .tracking(0.8)
+                        .foregroundStyle(GlassTheme.textSecondary)
                     Spacer()
                     Text(shortcut)
-                        .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                        .frame(minWidth: 18, minHeight: 18)
-                        .padding(.horizontal, 5)
-                        .background(Color.primary.opacity(0.10))
-                        .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(Color.primary.opacity(0.12)))
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                        .foregroundStyle(.primary)
+                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 1)
+                        .foregroundStyle(GlassTheme.textPrimary)
+                        .background(Color.white.opacity(0.25))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 Text(text)
                     .font(.system(size: 13))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(GlassTheme.textPrimary)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(hovering ? Color.accentColor.opacity(0.14) : Color.primary.opacity(0.05))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(hovering ? Color.accentColor.opacity(0.45) : Color.primary.opacity(0.08))
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .glassCard(hovering: hovering)
         }
         .buttonStyle(.plain)
         .onHover { hovering = $0 }
