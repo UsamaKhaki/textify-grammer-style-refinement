@@ -46,7 +46,7 @@ final class AppCoordinator: ObservableObject {
 
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 560, height: 440),
-            styleMask: [.titled, .closable, .fullSizeContentView],
+            styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
@@ -59,6 +59,7 @@ final class AppCoordinator: ObservableObject {
         window.isOpaque = false
         window.backgroundColor = .clear
         window.hasShadow = true
+        window.minSize = NSSize(width: 420, height: 320)
 
         vm.onPick = { [weak self, weak window] chosen in
             self?.clipboard.writeText(chosen)

@@ -4,15 +4,22 @@ import KeyboardShortcuts
 import ServiceManagement
 
 struct SettingsWindow: View {
+    @EnvironmentObject private var settings: SettingsStore
+
     var body: some View {
-        TabView {
-            GeneralTab().tabItem { Label("General", systemImage: "gearshape") }
-            ProviderTab().tabItem { Label("AI Provider", systemImage: "cpu") }
-            ThemeTab().tabItem { Label("Theme", systemImage: "paintpalette") }
-            AboutTab().tabItem { Label("About", systemImage: "info.circle") }
+        ZStack {
+            settings.gradientTheme.gradient
+                .ignoresSafeArea()
+
+            TabView {
+                GeneralTab().tabItem { Label("General", systemImage: "gearshape") }
+                ProviderTab().tabItem { Label("AI Provider", systemImage: "cpu") }
+                ThemeTab().tabItem { Label("Theme", systemImage: "paintpalette") }
+                AboutTab().tabItem { Label("About", systemImage: "info.circle") }
+            }
+            .padding(20)
         }
         .frame(width: 520, height: 460)
-        .padding(20)
         .onAppear {
             // LSUIElement apps need explicit activation so keyboard events
             // (including ⌘V for pasting the API key) reach this window.
@@ -165,7 +172,7 @@ private struct ThemeTab: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Pick a gradient for the refinement window")
                 .font(.callout)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(GlassTheme.textSecondary)
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 14) {
                     ForEach(GradientTheme.all) { theme in
@@ -179,9 +186,10 @@ private struct ThemeTab: View {
                 }
                 .padding(.vertical, 4)
             }
+            .scrollContentBackground(.hidden)
             Text("Changes apply instantly.")
                 .font(.caption)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(GlassTheme.textTertiary)
         }
         .padding(.horizontal, 4)
     }
@@ -204,20 +212,20 @@ private struct ThemeSwatch: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 11)
                                 .strokeBorder(
-                                    isSelected ? Color.accentColor : Color.primary.opacity(hovering ? 0.25 : 0.1),
+                                    isSelected ? Color.white : Color.white.opacity(hovering ? 0.55 : 0.25),
                                     lineWidth: isSelected ? 3 : 1
                                 )
                         )
                     if isSelected {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 20))
-                            .foregroundStyle(.white, Color.accentColor)
+                            .foregroundStyle(.white, Color.black.opacity(0.35))
                             .shadow(radius: 2)
                     }
                 }
                 Text(theme.name)
                     .font(.caption.weight(isSelected ? .semibold : .regular))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(GlassTheme.textPrimary)
                     .lineLimit(1)
             }
         }
@@ -229,9 +237,13 @@ private struct ThemeSwatch: View {
 private struct AboutTab: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Textify").font(.title2.bold())
+            Text("Textify")
+                .font(.title2.bold())
+                .foregroundStyle(GlassTheme.textPrimary)
             Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0")")
-            Text("Grammar and style refinement at ⌘⇧T.").foregroundStyle(.secondary)
+                .foregroundStyle(GlassTheme.textSecondary)
+            Text("Grammar and style refinement at ⌘⇧T.")
+                .foregroundStyle(GlassTheme.textSecondary)
             Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)

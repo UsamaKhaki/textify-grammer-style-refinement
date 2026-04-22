@@ -12,11 +12,19 @@ struct RefinementWindow: View {
                 .ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 12) {
-                content
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        content
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .scrollIndicators(.automatic)
+                footer
             }
             .padding(16)
         }
-        .frame(width: 560, height: 440)
+        .frame(minWidth: 420, minHeight: 320)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .focusable()
         .onKeyPress(.escape) { close(); return .handled }
         .onKeyPress(.init("1")) { vm.pick(1); return .handled }
@@ -39,8 +47,6 @@ struct RefinementWindow: View {
             originalBox(isBusy: false)
             errorView(err)
         }
-        Spacer(minLength: 0)
-        footer
     }
 
     private var emptyView: some View {
